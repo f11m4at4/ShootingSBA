@@ -3,6 +3,7 @@
 
 #include "CEnemyGOD.h"
 #include "CEnemy.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACEnemyGOD::ACEnemyGOD()
@@ -17,6 +18,22 @@ void ACEnemyGOD::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FindSpawnPoints();
+
+	//TArray<AActor*> allActors;
+	//// spawnPoint 들 찾아오기
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), allActors);
+	//// 이들중에서 spawnpoint 만 찾아서 가져오자
+	//for (auto actor : allActors)
+	//{
+	//	// 이름이 spawnpoint 를 포함하고 있으면
+	//	if (actor->GetName().Contains("SpawnPoint"))
+	//	{
+	//		// 가져오기
+	//		spawnPoints.Add(actor);
+	//	}
+	//}
+
 	FTimerHandle TimerHandle;
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACEnemyGOD::CreateEnemy, createTime, true);
@@ -34,8 +51,19 @@ void ACEnemyGOD::Tick(float DeltaTime)
 // 일정시간에 한번씩 적을 만들고 싶다.
 void ACEnemyGOD::CreateEnemy()
 {
+	// spawnPoint가 없으면 처리하지 않도록
+	if (spawnPoints.Num() < 1)
+	{
+		return;
+	}
+	
 	// spawnpoints 중에 랜덤한 위치를 뽑아서 그위치에 생성하도로고 하자
-	GetWorld()->SpawnActor<ACEnemy>(enemyFactory, GetActorLocation(), FRotator::ZeroRotator);
+	// 1. 랜덤한 스폰 인덱스 추출하기
+	int spawnIndex = FMath::RandRange(0, spawnPoints.Num()-1);
+	// 2. 스폰할 위치
+	FVector loc = spawnPoints[spawnIndex]->GetActorLocation();
+	// 3. 생성하자
+	GetWorld()->SpawnActor<ACEnemy>(enemyFactory, loc, FRotator::ZeroRotator);
 	//// 일정시간에 한번씩 적을 만들고 싶다.
 	//// 1. 시간이 흘렀으니까
 	//currentTime += GetWorld()->DeltaTimeSeconds;
@@ -48,5 +76,10 @@ void ACEnemyGOD::CreateEnemy()
 	//	// 4. 경과시간 초기화
 	//	currentTime = 0;
 	//}
+}
+
+void ACEnemyGOD::FindSpawnPoints_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Red, "Test Native Event");
 }
 

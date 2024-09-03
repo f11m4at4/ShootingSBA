@@ -70,13 +70,7 @@ void ACEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// P = P0 + vt
-	FVector P0 = GetActorLocation();
-	FVector vt = Direction * speed * DeltaTime;
-	FVector P = P0 + vt;
-	SetActorLocation(P);
-	FRotator rot = UKismetMathLibrary::MakeRotFromXZ(GetActorForwardVector(), Direction);
-	//FRotator rot = UKismetMathLibrary::FindLookAtRotation(P, P + Direction);
-	SetActorRotation(rot);
+	
 }
 
 void ACEnemy::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -90,6 +84,20 @@ void ACEnemy::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	//	return;
 	//}
 
+	// 폭발효과발생
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), expFactory, GetActorLocation(), FRotator::ZeroRotator);
+
 	OtherActor->Destroy();
 	Destroy();
+}
+
+void ACEnemy::Move()
+{
+	FVector P0 = GetActorLocation();
+	FVector vt = Direction * speed * GetWorld()->DeltaTimeSeconds;
+	FVector P = P0 + vt;
+	SetActorLocation(P);
+	FRotator rot = UKismetMathLibrary::MakeRotFromXZ(GetActorForwardVector(), Direction);
+	//FRotator rot = UKismetMathLibrary::FindLookAtRotation(P, P + Direction);
+	SetActorRotation(rot);
 }

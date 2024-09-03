@@ -45,4 +45,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Settings")
 	TSubclassOf<class ACBullet> bulletFactory;
 	void Fire();
+
+	/*UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	class USoundBase* bulletSound;*/
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayFireSound();
 };

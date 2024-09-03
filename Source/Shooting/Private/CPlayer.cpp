@@ -85,6 +85,8 @@ void ACPlayer::Vertical(float value)
 
 void ACPlayer::Fire()
 {
+	PlayFireSound();
 	GetWorld()->SpawnActor<ACBullet>(bulletFactory, GetActorLocation(), FRotator::ZeroRotator);
 }
+
 

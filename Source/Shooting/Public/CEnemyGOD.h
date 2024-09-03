@@ -32,7 +32,10 @@ public:
 	void CreateEnemy();
 
 	// 적이 스폰될 위치기억 배열
-	UPROPERTY(EditInstanceOnly, meta=(MakeEditWidget = true))
-	UPROPERTY(EditInstanceOnly)
+	//UPROPERTY(EditInstanceOnly, meta=(MakeEditWidget = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> spawnPoints;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void FindSpawnPoints();
 };
