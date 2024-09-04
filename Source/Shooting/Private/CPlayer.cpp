@@ -4,6 +4,7 @@
 #include "CPlayer.h"
 #include "Components/BoxComponent.h"
 #include "CBullet.h"
+#include "CShootGameMode.h"
 
 // Sets default values
 ACPlayer::ACPlayer()
@@ -49,6 +50,16 @@ void ACPlayer::BeginPlay()
 void ACPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// 게임의 상태가 Ready, Start, Playing 일때만 이동가능
+	auto gm = Cast<ACShootGameMode>(GetWorld()->GetAuthGameMode());
+	if (gm && !(gm->myState == EShootGameState::Ready ||
+		gm->myState == EShootGameState::Start ||
+		gm->myState == EShootGameState::Playing))
+	{
+		return;
+	}
+
 	// 사용자의 입력에따라 이동하고 싶다.
 	// 1. 사용자의 입력을 받아야한다.
 	// 2. 방향이 필요하다.
@@ -85,6 +96,14 @@ void ACPlayer::Vertical(float value)
 
 void ACPlayer::Fire()
 {
+	// 게임의 상태가 Ready, Start, Playing 일때만 이동가능
+	auto gm = Cast<ACShootGameMode>(GetWorld()->GetAuthGameMode());
+	if (gm && !(gm->myState == EShootGameState::Ready ||
+		gm->myState == EShootGameState::Start ||
+		gm->myState == EShootGameState::Playing))
+	{
+		return;
+	}
 	PlayFireSound();
 	GetWorld()->SpawnActor<ACBullet>(bulletFactory, GetActorLocation(), FRotator::ZeroRotator);
 }

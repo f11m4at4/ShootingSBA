@@ -4,6 +4,7 @@
 #include "CEnemyGOD.h"
 #include "CEnemy.h"
 #include "Kismet/GameplayStatics.h"
+#include "CShootGameMode.h"
 
 // Sets default values
 ACEnemyGOD::ACEnemyGOD()
@@ -51,6 +52,13 @@ void ACEnemyGOD::Tick(float DeltaTime)
 // 일정시간에 한번씩 적을 만들고 싶다.
 void ACEnemyGOD::CreateEnemy()
 {
+	// 게임의 상태가 Ready, Start, Playing 일때만 이동가능
+	auto gm = Cast<ACShootGameMode>(GetWorld()->GetAuthGameMode());
+	if (gm && gm->myState != EShootGameState::Playing)
+	{
+		return;
+	}
+
 	// spawnPoint가 없으면 처리하지 않도록
 	if (spawnPoints.Num() < 1)
 	{
